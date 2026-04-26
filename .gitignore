@@ -1,0 +1,19 @@
+# Virtual environment
+.venv/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Screenshots (local testing)
+screenshot_*.png
+
+# OS files
+.DS_Store
+Thumbs.db
