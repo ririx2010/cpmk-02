@@ -15,6 +15,24 @@
   pdfborder={0 0 0}}
 \usepackage[expansion=false]{microtype}
 \usepackage{longtable}
+\usepackage{listings}
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\tiny,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{red!70!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=4pt,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false,
+  tabsize=4,
+  xleftmargin=6pt,
+  framexleftmargin=6pt,
+}
 
 \title{Ujian CPMK-2: Sistem Pendukung Keputusan\\Pemilihan Bidang Konsentrasi Mahasiswa\\Menggunakan Fuzzy Inference System Metode Mamdani}
 \author{\IEEEauthorblockN{RIYADI}\\
@@ -866,6 +884,8 @@ merah/kuning akibat rule R7.}
         19 data latih.
   \item Simulasi Python (\texttt{sim\_fuzzy\_spk.py}) mengonfirmasi
         semua hasil perhitungan secara numerik.
+  \item Aplikasi web interaktif tersedia untuk demo publik di:\\
+        \url{https://cpmk-02-ririx.streamlit.app/}
 \end{enumerate}
 
 % =====================================================================
@@ -887,5 +907,14 @@ merah/kuning akibat rule R7.}
   Pertemuan ke-6, Magister Teknik Elektro,
   Universitas Jenderal Soedirman, 2026.
 \end{thebibliography}
+
+% =====================================================================
+\appendices
+% =====================================================================
+
+\section{Source Code: \texttt{sim\_fuzzy\_spk.py}}
+\label{app:sim}
+
+\lstinputlisting[firstline=1,lastline=160,title={sim\_fuzzy\_spk.py --- FIS Mamdani (bagian inti)}]{sim_fuzzy_spk_clean.py}
 
 \end{document}

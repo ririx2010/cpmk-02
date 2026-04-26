@@ -690,10 +690,14 @@ for i, (num, title, desc, color) in enumerate(conclusions):
     add_textbox(slide, 2.1, y + 0.1, 3, 0.5, title, font_size=18, bold=True, color=color)
     add_textbox(slide, 2.1, y + 0.55, 10, 0.6, desc, font_size=14, color=LIGHT)
 
-# Bottom
-add_textbox(slide, 1.5, 7.0, 10, 0.4,
-    "Terima kasih — Ada pertanyaan?",
-    font_size=20, bold=True, color=WHITE, alignment=PP_ALIGN.CENTER)
+# Bottom: Demo link + closing
+add_card(slide, 1.0, 6.85, 11.3, 0.55, BG_CARD)
+add_textbox(slide, 1.2, 6.9, 8, 0.4,
+    "Demo interaktif: https://cpmk-02-ririx.streamlit.app/",
+    font_size=13, color=GOLD)
+add_textbox(slide, 9.5, 6.9, 2.7, 0.4,
+    "Terima kasih!",
+    font_size=16, bold=True, color=WHITE, alignment=PP_ALIGN.RIGHT)
 
 add_notes(slide, """HINT — SLIDE 10 (Kesimpulan) — ~1 menit
 
