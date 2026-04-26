@@ -246,7 +246,38 @@ Ini diagram alir FIS Mamdani yang saya gunakan. Ada 5 tahap:
 5. DEFUZZIFIKASI: hitung Centre of Gravity (COG) = titik pusat massa dari area.
    Untuk RPLD data #20, COG = 75.00
 
-Contoh di bawah menunjukkan end-to-end untuk data RPLD #20.""")
+Contoh di bawah menunjukkan end-to-end untuk data RPLD #20.
+
+---
+
+APABILA DITANYAKAN:
+
+Q: Apa itu "crisp"?
+A: Crisp = nilai tegas/pasti, bukan fuzzy. Misalnya IP=3.52 adalah nilai crisp.
+   Lawannya adalah nilai fuzzy yang punya derajat keanggotaan (misal μ=0.96).
+
+Q: α (alpha) itu apa?
+A: Alpha disebut "firing strength" atau kekuatan aktivasi rule. Ini menunjukkan
+   seberapa kuat sebuah rule "aktif". Dihitung dengan α = min(μ_IP, μ_Minat).
+   Mengapa min? Karena dalam logika fuzzy, operator AND menggunakan min — kedua
+   syarat harus terpenuhi, diambil yang paling lemah (bottleneck).
+
+Q: Kenapa implikasi pakai min, bukan kali (product)?
+A: Min dipilih karena konsisten dengan semantik AND dalam fuzzy. Min lebih intuitif
+   dan menghasilkan clipping (potongan horizontal) yang mudah divisualisasikan.
+   Product (Larsen) juga valid tapi menghasilkan scaling yang lebih kompleks.
+
+Q: COG (Centre of Gravity) itu apa?
+A: Centre of Gravity = titik pusat massa (centroid) dari area fuzzy agregasi.
+   Analoginya seperti menentukan titik keseimbangan sebuah bidang datar.
+   Rumusnya: COG = integral(y × μ(y)) / integral(μ(y)).
+   Ini metode defuzzifikasi paling umum karena mempertimbangkan seluruh area,
+   bukan hanya satu titik.
+
+Q: Kenapa agregasi pakai max?
+A: Karena beberapa rule bisa aktif bersamaan dan menghasilkan output berbeda.
+   Operator max mengambil nilai tertinggi di setiap titik — artinya rule dengan
+   firing strength terbesar yang mendominasi. Ini konsisten dengan semantik OR.""")
 
 # ═════════════════════════════════════════════════════════════════════
 # SLIDE 4: Fuzzifikasi
@@ -300,7 +331,37 @@ maka minat 2.60 dan 2.80 akan hampir sama μ-nya.
 Dengan puncak di 3, selisih 0.6 vs 0.8 lebih signifikan.
 
 Kenapa segitiga, bukan trapesium? Karena untuk variabel akademik,
-representasi linear sudah memadai dan komputasinya lebih ringan.""")
+representasi linear sudah memadai dan komputasinya lebih ringan.
+
+---
+
+APABILA DITANYAKAN:
+
+Q: μ (mu) itu apa?
+A: Mu = derajat keanggotaan (membership degree), nilainya 0 sampai 1.
+   μ=0 artinya "sama sekali bukan anggota", μ=1 artinya "anggota penuh",
+   μ=0.8 artinya "80% menjadi anggota". Ini inti dari logika fuzzy:
+   tidak hanya YA/TIDAK (0/1), tapi bisa di antaranya.
+
+Q: Apa itu "semesta pembicaraan" (universe of discourse)?
+A: Semesta pembicaraan = rentang nilai yang valid untuk suatu variabel.
+   Untuk IP: semestanya 0-4 (skala IPK di Indonesia).
+   Untuk Minat: 0-4 (skala survei).
+   Untuk NK: 0-100 (persentase kelayakan).
+   Di luar semesta ini, μ selalu = 0.
+
+Q: Kenapa ada overlap antar MF?
+A: Overlap memungkinkan satu nilai crisp masuk ke 2 himpunan sekaligus.
+   Contoh: IP=3.40 masuk ke Cukup (μ=0.1) DAN Bagus (μ=0.8).
+   Tanpa overlap, sistem tidak bisa menangkap transisi halus —
+   akan seperti sistem konvensional (crisp, hanya 1 kategori).
+
+Q: Kenapa segitiga, bukan trapesium atau bell/Gaussian?
+A: Segitiga paling sederhana, komputasi paling ringan (hanya 2 if-else),
+   dan sudah cukup merepresentasikan gradasi untuk variabel akademik.
+   Trapesium cocok jika ada "zona datar" (plateau), misalnya "IP 3.0-3.5
+   semua dianggap bagus". Bell shape lebih mulus tapi komputasi lebih berat
+   (memakai fungsi eksponensial). Untuk kebutuhan SPK ini, segitiga cukup.""")
 
 # ═════════════════════════════════════════════════════════════════════
 # SLIDE 5: 9 Fuzzy Rules
@@ -539,7 +600,36 @@ KESIMPULAN: RPLD (75) > ITP (71.14) > SKJK (50) → RPLD MENANG!
 
 Point penjelasan: meskipun SKJK punya IP TERTINGGI (3.65),
 rule R7 membatasinya karena minatnya sangat rendah.
-Ini menunjukkan fuzzy system menangkap kedua faktor secara seimbang.""")
+Ini menunjukkan fuzzy system menangkap kedua faktor secara seimbang.
+
+---
+
+APABILA DITANYAKAN:
+
+Q: Kenapa RPLD NK-nya persis 75.00, bukan desimal?
+A: Karena hanya 1 rule aktif (R8, α=0.80) yang menghasilkan trapesium
+   simetris pada MF Tinggi (50,75,100) yang dipotong di 0.80.
+   Trapesium simetris memiliki COG tepat di titik puncaknya = 75.
+   Kalau ada 2+ rule aktif (seperti ITP), trapesium tidak simetris,
+   sehingga COG bergeser dari 75 (ITP jadi 71.14).
+
+Q: Apa itu "trapesium simetris"?
+A: Ketika MF segitiga Tinggi(50,75,100) dipotong horizontal di α=0.80,
+   bentuknya menjadi trapesium dengan sisi kiri dan kanan sama panjang.
+   Titik pusat massa (COG) trapesium simetris = titik puncak segitiga asli.
+   Itu kenapa RPLD = persis 75.
+
+Q: Kenapa ITP punya 2 rule aktif tapi NK-nya lebih rendah dari RPLD?
+A: ITP mengaktifkan R5 (Sedang, α=0.1) dan R8 (Tinggi, α=0.6).
+   Agregasi max menghasilkan area dengan puncak di Tinggi, tapi
+   bagian Sedang (kiri) menarik COG ke kiri, sehingga turun dari 75 → 71.14.
+   RPLD hanya mengaktifkan R8 dengan α lebih tinggi (0.80), murni Tinggi.
+
+Q: Bagaimana COG dihitung secara numerik?
+A: COG = integral(y × μ(y) dy) / integral(μ(y) dy).
+   Dalam kode, semesta NK (0-100) didiskritisasi menjadi 10.001 titik
+   dengan step=0.01. Integral dihitung dengan metode trapezoid.
+   10.001 titik dipilih agar error numerik < 0.01 (sub-pixel).""")
 
 # ═════════════════════════════════════════════════════════════════════
 # SLIDE 8: Hasil Verifikasi
@@ -586,7 +676,40 @@ Hasil: akurasi 100% pada 19 data latih, dan data target #20
 berhasil merekomendasikan RPLD sesuai syarat soal ujian.
 
 Semua perhitungan diverifikasi menggunakan Python
-dengan 10.001 titik diskritisasi untuk akurasi numerik.""")
+dengan 10.001 titik diskritisasi untuk akurasi numerik.
+
+---
+
+APABILA DITANYAKAN:
+
+Q: Apa maksud "10.001 titik diskritisasi"?
+A: Semesta output NK adalah kontinu (0 sampai 100). Untuk menghitung COG
+   secara numerik, kita membagi semesta ini menjadi titik-titik diskret.
+   10.001 titik artinya step = 100/10000 = 0.01. Jadi kita evaluasi
+   μ(y) di y = 0.00, 0.01, 0.02, ..., 99.99, 100.00.
+   Integral kontinu dihitung dengan metode trapezoid (penjumlahan area
+   trapesium kecil). Dengan step 0.01, error numerik < 0.01 (sub-pixel).
+
+Q: Kenapa 10.001, bukan 1.001 atau 100.001?
+A: 1.001 titik (step=0.1) → error sekitar 0.1, masih kasar.
+   10.001 titik (step=0.01) → error < 0.01, akurat untuk 2 desimal.
+   100.001 titik → error < 0.001, tapi komputasi 10x lebih berat
+   tanpa perbaikan signifikan. 10.001 adalah titik manis (sweet spot).
+
+Q: "Diskritisasi" itu apa?
+A: Diskritisasi = mengubah sesuatu yang kontinu (rangenya tak terhingga)
+   menjadi titik-titik diskret (berhingga). Analoginya: kurva kontinu
+   di-approximate oleh bar-chart yang sangat halus. Semakin banyak titik,
+   semakin mendekati kurva aslinya. 10.001 titik membuat bar-chart
+   terlihat seperti kurva mulus.
+
+Q: Kenapa akurasi 100%? Apakah overfitting?
+A: Bukan overfitting karena ini BUKAN machine learning. Ini FIS Mamdani
+   (rule-based). 100% akurat karena rules dirancang berdasarkan logika
+   yang konsisten: jika IP dan Minat tinggi → NK tinggi. Data survei
+   memang mengikuti pola ini. FIS Mamdani tidak "belajar" dari data,
+   tapi menerapkan aturan yang kita tentukan. 100% berarti rules
+   konsisten dengan pola data.""")
 
 # ═════════════════════════════════════════════════════════════════════
 # SLIDE 9: Decision Boundary (with explanation)
@@ -654,7 +777,36 @@ TANPA Rule R7, seluruh sisi kanan akan hijau — dan SKJK akan menang.
 R7 membuat "jurang" di area kanan bawah, memastikan minat tetap diperhitungkan.
 
 Ini membuktikan bahwa fuzzy system menangkap kedua faktor secara seimbang,
-bukan hanya mengambil IP tertinggi.""")
+bukan hanya mengambil IP tertinggi.
+
+---
+
+APABILA DITANYAKAN:
+
+Q: "Decision boundary" itu apa?
+A: Decision boundary = batas keputusan, yaitu garis/kurva yang memisahkan
+   wilayah dengan output berbeda. Di sini, wilayah hijau (NK tinggi) vs
+   merah (NK rendah) dipisahkan oleh "batas" yang ditentukan oleh rules.
+   Istilah ini dipinjam dari machine learning, tapi konsepnya sama:
+   pemetaan dari input space ke output regions.
+
+Q: Apa itu "heatmap" / "contour"?
+A: Heatmap = peta warna, di mana setiap piksel diwarnai berdasarkan nilai NK.
+   Merah = NK rendah, hijau = NK tinggi. Dihasilkan dengan menghitung
+   FIS Mamdani untuk setiap titik grid (40×40 = 1.600 kombinasi IP/Minat).
+   Contour = garis yang menghubungkan titik dengan nilai sama (iso-NK).
+
+Q: Kenapa threshold NK=50 dan NK=75 yang dipilih?
+A: Karena parameter MF output (NK): Rendah berpuncak di 25, Sedang di 50,
+   Tinggi di 75. Garis NK=50 memisahkan "rendah vs sedang",
+   garis NK=75 memisahkan "sedang vs tinggi". Ini BUKAN threshold
+   yang ditetapkan manual, tapi konsekuensi dari parameter MF output.
+
+Q: Bagaimana heatmap ini dibuat?
+A: Saya membuat grid 40×40 pada rentang IP=[0,4] dan Minat=[0,4].
+   Untuk setiap titik grid, saya jalankan FIS Mamdani → dapat NK.
+   Lalu NK di-mapping ke warna (merah-kuning-hijau).
+   Total 1.600 evaluasi FIS, selesai dalam hitungan detik.""")
 
 # ═════════════════════════════════════════════════════════════════════
 # SLIDE 10: Kesimpulan
@@ -721,7 +873,7 @@ Sekian presentasi saya. Terima kasih. Ada pertanyaan?
 
 ---
 
-PERSIAPAN ANTISIPASI PERTANYAAN DOSEN:
+APABILA DITANYAKAN:
 
 Q: Kenapa tidak pakai Sugeno?
 A: Sugeno tidak menghasilkan area fuzzy, hanya angka. Untuk SPK
@@ -741,7 +893,81 @@ A: Parameter disesuaikan dengan sebaran data survei. IP Bagus
 
 Q: Bagaimana kalau datanya berubah?
 A: Parameter MF dan rules bisa di-tuning menggunakan data training.
-   Sistem ini bisa diupgrade dengan learning otomatis (ANFIS).""")
+   Sistem ini bisa diupgrade dengan learning otomatis (ANFIS).
+
+Q: Apa maksud "10.001 titik diskritisasi" di laporan?
+A: Semesta output NK (0-100) adalah kontinu. Untuk menghitung integral COG
+   secara numerik, semesta ini dibagi menjadi 10.001 titik diskret dengan
+   jarak (step) = 0.01. Integral kontinu di-approximate oleh metode trapezoid
+   (penjumlahan ribuan trapesium kecil). Dengan step 0.01, akurasi
+   defuzzifikasi < 0.01 — artinya NK=75.00 bukan dibulatkan, tapi benar-benar
+   hasil numerik yang presisi. Diskritisasi = mengubah kurva kontinu menjadi
+   bar-chart yang sangat halus (10.001 batang).""")
+
+# ═════════════════════════════════════════════════════════════════════
+# Transisi Slide (XML injection — python-pptx belum support native)
+# ═════════════════════════════════════════════════════════════════════
+from lxml import etree
+
+TRANSITIONS = [
+    # (slide_index, transition_type, duration_ms)
+    # Slide 0: Title → Fade
+    (0, "fade", 700),
+    # Slide 1: Masalah → Push from right
+    (1, "push", 600),
+    # Slide 2: Arsitektur → Wipe from left
+    (2, "wipe", 600),
+    # Slide 3: Fuzzifikasi → Cover from bottom
+    (3, "cover", 600),
+    # Slide 4: Rules → Fade through black
+    (4, "fade", 700),
+    # Slide 5: Metode → Push from bottom
+    (5, "push", 600),
+    # Slide 6: Walkthrough → Wipe from right
+    (6, "wipe", 600),
+    # Slide 7: Verifikasi → Cover from left
+    (7, "cover", 600),
+    # Slide 8: Decision Boundary → Fade
+    (8, "fade", 700),
+    # Slide 9: Kesimpulan → Fade through black
+    (9, "fade", 800),
+]
+
+# PowerPoint OOXML namespace
+nsmap = {
+    "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
+    "p14": "http://schemas.microsoft.com/office/powerpoint/2010/main",
+}
+
+def add_transition(slide, trans_type, duration_ms, advance_ms=None):
+    """Inject slide transition via XML."""
+    sld = slide._element
+
+    # Remove existing transition if any
+    for existing in sld.findall(".//{http://schemas.openxmlformats.org/presentationml/2006/main}transition"):
+        sld.remove(existing)
+
+    # Build transition XML
+    attrs = {f"{{{nsmap['p']}}}spd": "med"}
+    if advance_ms:
+        attrs[f"{{{nsmap['p']}}}advTm"] = str(advance_ms)
+
+    transition = etree.SubElement(sld, f"{{{nsmap['p']}}}transition", attrs)
+
+    if trans_type == "fade":
+        etree.SubElement(transition, f"{{{nsmap['p']}}}fade", {f"{{{nsmap['p']}}}thruBlk": "1"})
+    elif trans_type == "push":
+        etree.SubElement(transition, f"{{{nsmap['p']}}}push", {f"{{{nsmap['p']}}}dir": "r"})
+    elif trans_type == "wipe":
+        etree.SubElement(transition, f"{{{nsmap['p']}}}wipe", {f"{{{nsmap['p']}}}dir": "r"})
+    elif trans_type == "cover":
+        etree.SubElement(transition, f"{{{nsmap['p']}}}cover", {f"{{{nsmap['p']}}}dir": "l"})
+    elif trans_type == "split":
+        etree.SubElement(transition, f"{{{nsmap['p']}}}split", {f"{{{nsmap['p']}}}orient": "horz"})
+
+for idx, trans_type, dur in TRANSITIONS:
+    if idx < len(prs.slides):
+        add_transition(prs.slides[idx], trans_type, dur)
 
 # ═════════════════════════════════════════════════════════════════════
 # Save
