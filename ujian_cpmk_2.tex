@@ -727,6 +727,7 @@ RPLD memiliki NK tertinggi ($75.00$) dan direkomendasikan.}
         rule R8 yang mengarah ke output Tinggi.
 \end{itemize}
 
+
 % =====================================================================
 \section{Hasil dan Verifikasi}
 \label{sec:hasil}
@@ -736,39 +737,18 @@ Simulasi Python (\texttt{sim\_fuzzy\_spk.py}) mengimplementasikan FIS
 Mamdani secara numerik dengan $n=10\,001$ titik diskritisasi.
 Tabel~\ref{tab:hasil} menyajikan hasil lengkap untuk 20 data.
 
-\subsection{Analisis Decision Boundary}
-\label{subsec:decision-boundary}
+Gambar~\ref{fig:decision-boundary} menunjukkan \emph{decision boundary}
+yang memetakan NK sebagai fungsi dari IPK dan Minat secara serentak.
+Warna menunjukkan NK: \textcolor{red}{merah} (rendah), kuning (sedang),
+\textcolor{green}{hijau} (tinggi). Untuk data target \#20: SKJK
+$(3.65;\,1.50)$ jatuh di zona merah/kuning (NK$=50$, rule R7),
+ITP $(3.40;\,2.60)$ di zona kuning/hijau (NK$=71.14$), dan RPLD
+$(3.52;\,2.80)$ di zona hijau (NK$=75$). Area kanan bawah (IP tinggi,
+Minat rendah) tetap rendah --- konsekuensi rule R7 yang memastikan
+IP tinggi saja tidak cukup tanpa minat.
 
-Decision boundary (Gambar~\ref{fig:decision-boundary}) memetakan
-Nilai Kelayakan sebagai fungsi dari dua variabel input secara
-serentak. Sumbu horizontal merepresentasikan IPK ($0$--$4$), sumbu
-vertikal merepresentasikan Minat ($0$--$4$), dan warna menunjukkan
-NK: \textcolor{red}{merah} untuk NK rendah, \textcolor{green}{hijau}
-untuk NK tinggi. Garis putus-putus menandai \emph{threshold}
-NK$=50$ (batas Rendah/Sedang) dan NK$=75$ (batas Sedang/Tinggi).
-
-\noindent\textbf{Cara membaca chart untuk data target \#20:}
-\begin{itemize}[nosep,leftmargin=*]
-  \item \textbf{SKJK} ($\circ$): berada di kanan bawah (IP$=3.65$,
-        Minat$=1.50$) --- zona merah/kuning. IP tinggi namun minat
-        sangat rendah menyebabkan NK hanya $50$ (Sedang), karena
-        rule R7 membatasi output.
-  \item \textbf{ITP} ($\square$): berada di tengah (IP$=3.40$,
-        Minat$=2.60$) --- zona kuning/hijau muda. Kombinasi cukup
-        baik, NK $=71.14$.
-  \item \textbf{RPLD} ($\triangle$): berada di kanan atas (IP$=3.52$,
-        Minat$=2.80$) --- zona hijau tua. Kombinasi terbaik,
-        NK $=75.00$ (tertinggi).
-\end{itemize}
-
-\noindent\textbf{Interpretasi visual:} Chart ini menunjukkan bahwa
-NK tinggi (hijau) \emph{hanya} tercapai ketika kedua variabel
-memadai. Area kanan bawah (IP tinggi, Minat rendah) tetap berwarna
-kuning/merah --- inilah konsekuensi dari rule R7. Tanpa rule ini,
-seluruh sisi kanan chart akan berwarna hijau tanpa memandang minat.
-
-% --- Gambar Decision Boundary ----------------------------------------
-\begin{figure}[htbp]
+% --- Gambar Decision Boundary (full-width) ----------------------------
+\begin{figure*}[t!]
 \centering
 \begin{tikzpicture}[font=\scriptsize]
   % Simulated contour zones
@@ -808,13 +788,12 @@ seluruh sisi kanan chart akan berwarna hijau tanpa memandang minat.
   \node[right,font=\tiny] at (5.5,2.1) {NK tinggi};
 \end{tikzpicture}
 \caption{Decision boundary NK(IPK,\,Minat): zona hijau = kelayakan
-tinggi hanya tercapai bila IPK dan Minat keduanya memadai.
-Titik RPLD berada di zona hijau, sedangkan SKJK jatuh di zona
-merah/kuning akibat rule R7.}
+tinggi hanya tercapai bila IPK dan Minat keduanya memadai.}
 \label{fig:decision-boundary}
-\end{figure}
+\end{figure*}
 
-\begin{table*}[htbp]
+% --- Tabel VII: Hasil verifikasi 20 data ------------------------------
+\begin{table*}[t!]
 \centering\caption{Hasil rekomendasi FIS Mamdani untuk 20 data survei.}
 \label{tab:hasil}
 \small
@@ -852,7 +831,6 @@ merah/kuning akibat rule R7.}
 \bottomrule
 \end{tabular}
 \end{table*}
-
 \begin{itemize}[nosep]
   \item Akurasi pada 19 data latih: \textbf{19/19 = 100\,\%}.
   \item Data target \#20 berhasil merekomendasikan \textbf{RPLD}
@@ -913,7 +891,7 @@ merah/kuning akibat rule R7.}
 % =====================================================================
 
 \section{Source Code: \texttt{sim\_fuzzy\_spk.py}}
-\label{app:sim}
+\label{app:source}
 
 \lstinputlisting[firstline=1,lastline=160,title={sim\_fuzzy\_spk.py --- FIS Mamdani (bagian inti)}]{sim_fuzzy_spk_clean.py}
 
